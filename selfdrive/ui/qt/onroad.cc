@@ -342,7 +342,7 @@ void OnroadHud::updateState(const UIState &s) {
   float cur_speed = std::max(0.0, sm["carState"].getCarState().getVEgo() * (s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH));
 
   bool speed_trap_helper = false;
-  if (cur_speed > 50 && cur_speed < 60 || cur_speed > 70 && cur_speed < 80 || cur_speed > 90 && cur_speed < 100) {
+  if ((cur_speed > 50 && cur_speed < 60) || (cur_speed > 70 && cur_speed < 80) || (cur_speed > 90 && cur_speed < 100)) {
     speed_trap_helper = true;
   }
   setProperty("speedTrapHelper", speed_trap_helper);
