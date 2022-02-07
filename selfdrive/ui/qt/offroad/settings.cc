@@ -498,6 +498,12 @@ SunnypilotPanel::SunnypilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_mute.png",
                                   this));
 
+  toggles.append(new ParamControl("Change5speed",
+                                  "Change 5 speed 🏎️",
+                                  "Every tap to change the maximum cruising speed will change 5 instead of just 1.",
+                                  "../assets/offroad/icon_speed_limit.png",
+                                  this));
+
   toggles.append(new ParamControl("PrebuiltOn",
                                   "Fast Boot (Prebuilt)",
                                   "openpilot will fast boot by creating a Prebuilt file. Note: Turn off this feature if you have made any UI changes!",
