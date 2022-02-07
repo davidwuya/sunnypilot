@@ -58,6 +58,7 @@ class CarState(CarStateBase):
 
     ret.brakePressed = cp.vl["BRAKE_MODULE"]["BRAKE_PRESSED"] != 0
     ret.brakeHoldActive = cp.vl["ESP_CONTROL"]["BRAKE_HOLD_ACTIVE"] == 1
+    ret.brakeLightsDEPRECATED = bool(cp.vl["ESP_CONTROL"]["BRAKE_LIGHTS_ACC"] or ret.brakePressed or ret.brakeHoldActive)
     if self.CP.enableGasInterceptor:
       ret.gas = (cp.vl["GAS_SENSOR"]["INTERCEPTOR_GAS"] + cp.vl["GAS_SENSOR"]["INTERCEPTOR_GAS2"]) / 2.
       ret.gasPressed = ret.gas > 15
@@ -283,6 +284,7 @@ class CarState(CarStateBase):
 
     if CP.carFingerprint in TSS2_CAR:
       signals.append(("ACC_TYPE", "ACC_CONTROL", 0))
+      signals.append(("BRAKE_LIGHTS_ACC", "ESP_CONTROL"))
       checks.append(("ACC_CONTROL", 33))
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2, enforce_checks=False)
