@@ -221,6 +221,7 @@ class CarState(CarStateBase):
       ("TURN_SIGNALS", "STEERING_LEVERS", 3),   # 3 is no blinkers
       ("LKA_STATE", "EPS_STATUS", 0),
       ("AUTO_HIGH_BEAM", "LIGHT_STALK", 0),
+      ("BRAKE_LIGHTS_ACC", "ESP_CONTROL", 0)
     ]
 
     checks = [
@@ -284,7 +285,6 @@ class CarState(CarStateBase):
 
     if CP.carFingerprint in TSS2_CAR:
       signals.append(("ACC_TYPE", "ACC_CONTROL", 0))
-      signals.append(("BRAKE_LIGHTS_ACC", "ESP_CONTROL"))
       checks.append(("ACC_CONTROL", 33))
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2, enforce_checks=False)
