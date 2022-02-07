@@ -489,7 +489,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.preLaneChangeLeft: {
     ET.WARNING: Alert(
-      "Quando seguro puxe direção à Esquerda para iniciar mudança de faixa,
+      "Quando seguro puxe direção à Esquerda para iniciar mudança de faixa",
       "",
       AlertStatus.normal, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, alert_rate=0.75),
