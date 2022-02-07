@@ -42,7 +42,7 @@ class CarState(CarStateBase):
     self.prev_lkas_enabled = None
 
     # Toyota 5/5 Speed Increments
-    self._5in5_Speeds_Increments = op_params.get('Change5speed')
+    self._5in5_Speeds_Increments = Params().get_bool('Change5speed')
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
