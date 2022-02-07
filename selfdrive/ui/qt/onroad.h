@@ -59,6 +59,9 @@ Q_PROPERTY(QString roadName MEMBER roadName NOTIFY valueChanged);
   Q_PROPERTY(bool tscActive MEMBER tscActive NOTIFY valueChanged);
   Q_PROPERTY(int curveSign MEMBER curveSign NOTIFY valueChanged);
 
+  Q_PROPERTY(bool isBraking MEMBER isBraking NOTIFY valueChanged);
+  Q_PROPERTY(bool speedTrapHelper MEMBER speedTrapHelper NOTIFY valueChanged);
+
 public:
   explicit OnroadHud(QWidget *parent);
   void updateState(const UIState &s);
@@ -66,6 +69,7 @@ public:
 private:
   void drawIcon(QPainter &p, int x, int y, QPixmap &img, QBrush bg, float opacity);
   void drawText(QPainter &p, int x, int y, const QString &text, int alpha = 255);
+  void drawColorText(QPainter &p, int x, int y, const QString &text, QColor foraBozo);
   void drawCenteredText(QPainter &p, int x, int y, const QString &text, QColor color);
   void drawVisionTurnControllerUI(QPainter &p, int x, int y, int size, const QColor &color, const QString &speed,
                                   int alpha);
@@ -116,6 +120,9 @@ private:
   QString tscSubText;
   bool tscActive = false;
   int curveSign = 0;
+
+  bool isBraking = false;
+  bool speedTrapHelper = false;
 
 signals:
   void valueChanged();

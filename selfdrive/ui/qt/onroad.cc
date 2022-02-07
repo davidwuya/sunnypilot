@@ -341,6 +341,15 @@ void OnroadHud::updateState(const UIState &s) {
   QString maxspeed_str = cruise_set ? QString::number(std::nearbyint(maxspeed)) : "N/A";
   float cur_speed = std::max(0.0, sm["carState"].getCarState().getVEgo() * (s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH));
 
+  bool speed_trap_helper = false;
+  if (cur_speed > 50 && cur_speed < 60 || cur_speed > 70 && cur_speed < 80 || cur_speed > 90 && cur_speed < 100) {
+    speed_trap_helper = true;
+  }
+  setProperty("speedTrapHelper", speed_trap_helper);
+
+  bool is_braking = sm["carState"].getCarState().getBrakeLightsDEPRECATED();
+  setProperty("isBraking", is_braking);
+
   setProperty("is_cruise_set", cruise_set);
   setProperty("speed", QString::number(std::nearbyint(cur_speed)));
   setProperty("maxSpeed", maxspeed_str);
@@ -439,7 +448,10 @@ void OnroadHud::paintEvent(QPaintEvent *event) {
 
   // current speed
   configFont(p, "Open Sans", 176, "Bold");
-  drawText(p, rect().center().x(), 210, speed);
+  QColor fora_bozo = QColor(255, 255, 255, 255);
+  if (speedTrapHelper)
+    fora_bozo = QColor(0, 255, 0, 255);
+  drawColorText(p, rect().center().x(), 210, speed, isBraking? QColor(255, 0, 0, 255) : fora_bozo);
   configFont(p, "Open Sans", 66, "Regular");
   drawText(p, rect().center().x(), 290, speedUnit, 200);
 
@@ -494,6 +506,16 @@ void OnroadHud::drawText(QPainter &p, int x, int y, const QString &text, int alp
   real_rect.moveCenter({x, y - real_rect.height() / 2});
 
   p.setPen(QColor(0xff, 0xff, 0xff, alpha));
+  p.drawText(real_rect.x(), real_rect.bottom(), text);
+}
+
+void OnroadHud::drawColorText(QPainter &p, int x, int y, const QString &text, QColor foraBozo) {
+  QFontMetrics fm(p.font());
+  QRect init_rect = fm.boundingRect(text);
+  QRect real_rect = fm.boundingRect(init_rect, 0, text);
+  real_rect.moveCenter({x, y - real_rect.height() / 2});
+
+  p.setPen(foraBozo);
   p.drawText(real_rect.x(), real_rect.bottom(), text);
 }
 
