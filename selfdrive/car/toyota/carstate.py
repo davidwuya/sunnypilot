@@ -122,8 +122,7 @@ class CarState(CarStateBase):
       ret.cruiseState.speed = cp.vl["PCM_CRUISE_2"]["SET_SPEED"] * CV.KPH_TO_MS
 
     # Toyota 5/5 Speed Increments
-    self._5in5_Speeds_Increments = Params().get_bool('Change5speed')
-    self.Fast_Speed_Increments = (2 if self._5in5_Speeds_Increments else 1)
+    self.Fast_Speed_Increments = (2 if Params().get_bool('Change5speed') else 1)
 
     # some TSS2 cars have low speed lockout permanently set, so ignore on those cars
     # these cars are identified by an ACC_TYPE value of 2.
