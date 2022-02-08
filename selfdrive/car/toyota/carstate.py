@@ -221,7 +221,7 @@ class CarState(CarStateBase):
       ("TURN_SIGNALS", "STEERING_LEVERS", 3),   # 3 is no blinkers
       ("LKA_STATE", "EPS_STATUS", 0),
       ("AUTO_HIGH_BEAM", "LIGHT_STALK", 0),
-      ("BRAKE_LIGHTS_ACC", "ESP_CONTROL", 0)
+      ("BRAKE_LIGHTS_ACC", "ESP_CONTROL", 0),
     ]
 
     checks = [
