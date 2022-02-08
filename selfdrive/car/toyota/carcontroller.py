@@ -128,7 +128,7 @@ class CarController():
 
     if (frame % 100 == 0 or send_ui):
       if(CS.lkasEnabled):
-        can_sends.append(create_ui_command(self.packer, steer_alert, pcm_cancel_cmd, left_line, right_line, left_lane_depart, right_lane_depart, CS.lkasEnabled and not apply_steer_req))
+        can_sends.append(create_ui_command(self.packer, steer_alert, pcm_cancel_cmd, left_line, right_line, left_lane_depart, right_lane_depart, CS.lkasEnabled and not apply_steer_req, enabled))
       else:
         can_sends.append(create_ui_command_off(self.packer))
 
