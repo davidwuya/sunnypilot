@@ -489,7 +489,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.preLaneChangeLeft: {
     ET.WARNING: Alert(
-      "Quando seguro puxe direção à Esquerda para iniciar mudança de faixa",
+      "Direção à Esquerda para Mudança Segura de Faixa",
       "",
       AlertStatus.normal, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, alert_rate=0.75),
@@ -497,7 +497,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.preLaneChangeRight: {
     ET.WARNING: Alert(
-      "Quando seguro puxe direção à Direita para iniciar mudança de faixa",
+      "Direção à Direita para Mudança segura de faixa",
       "",
       AlertStatus.normal, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, alert_rate=0.75),
@@ -529,8 +529,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.manualLongitudinalRequired: {
     ET.WARNING: Alert(
-      "O controle de cruzeiro inteligente/adaptável está DESLIGADO",
-      "Gás/freios manuais necessários",
+      "Controle de cruzeiro inteligente está DESLIGADO",
+      "Acelerador e freios manuais necessários",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, 2.),
   },
