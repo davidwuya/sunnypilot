@@ -41,8 +41,6 @@ class CarState(CarStateBase):
     self.lkas_enabled = None
     self.prev_lkas_enabled = None
 
-    # Toyota 5/5 Speed Increments
-    self._5in5_Speeds_Increments = Params().get_bool('Change5speed')
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
@@ -123,10 +121,8 @@ class CarState(CarStateBase):
       ret.cruiseState.available = cp.vl["PCM_CRUISE_2"]["MAIN_ON"] != 0
       ret.cruiseState.speed = cp.vl["PCM_CRUISE_2"]["SET_SPEED"] * CV.KPH_TO_MS
 
-    if self._5in5_Speeds_Increments:
-      self.Fast_Speed_Increments = 2
-    else:
-      self.Fast_Speed_Increments = 1  
+    # Toyota 5/5 Speed Increments
+    self.Fast_Speed_Increments = (2 if Params().get_bool('Change5speed') else 1)
 
     # some TSS2 cars have low speed lockout permanently set, so ignore on those cars
     # these cars are identified by an ACC_TYPE value of 2.
