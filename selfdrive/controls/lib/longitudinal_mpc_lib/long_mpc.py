@@ -124,7 +124,7 @@ def gen_long_mpc_solver():
   a_min, a_max = ocp.model.p[0], ocp.model.p[1]
   x_obstacle = ocp.model.p[2]
   prev_a = ocp.model.p[3]
-  desired_TF = ocp.model[4]
+  desired_TF = ocp.model.p[4]
 
   ocp.cost.yref = np.zeros((COST_DIM, ))
   ocp.cost.yref_e = np.zeros((COST_E_DIM, ))
