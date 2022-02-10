@@ -529,7 +529,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.manualLongitudinalRequired: {
     ET.WARNING: Alert(
-      "Controle de cruzeiro inteligente está DESLIGADO",
+      "Cruzeiro Adaptativo DESLIGADO",
       "Acelerador e freios manuais necessários",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, 2.),
