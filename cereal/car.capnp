@@ -472,7 +472,7 @@ struct CarParams {
   networkLocation @50 :NetworkLocation;  # Where Panda/C2 is integrated into the car's CAN network
 
   wheelSpeedFactor @63 :Float32; # Multiplier on wheels speeds to computer actual speeds
-  smartDSU @64: Bool;  # true if sDSU is detected
+  smartDSU @65: Bool;  # true if sDSU is detected
 
   struct SafetyConfig {
     safetyModel @0 :SafetyModel;
