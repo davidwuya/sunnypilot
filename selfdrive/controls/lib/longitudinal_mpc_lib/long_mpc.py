@@ -263,7 +263,8 @@ class LongitudinalMpc():
                                    A_EGO_COST, A_CHANGE_COST * cost_multipliers[0],
                                    J_EGO_COST * cost_multipliers[1] ]))
     for i in range(N):
-      W[4,4] = A_CHANGE_COST * cost_multipliers[0] * np.interp(T_IDXS[i], [0.0, 1.0, 2.0], [1.0, 1.0, 0.0])
+      # KRKeegan, decreased timescale to .5s since Toyota lag is set to .3s
+      W[4,4] = A_CHANGE_COST * cost_multipliers[0] * np.interp(T_IDXS[i], [0.0, 0.5, 2.0], [1.0, 1.0, 0.0])
       self.solver.cost_set(i, 'W', W)
     # Setting the slice without the copy make the array not contiguous,
     # causing issues with the C interface.
