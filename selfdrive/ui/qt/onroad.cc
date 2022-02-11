@@ -199,9 +199,32 @@ ButtonsWindow::ButtonsWindow(QWidget *parent) : QWidget(parent) {
   QWidget *btns_wrapper = new QWidget;
   QHBoxLayout *btns_layout  = new QHBoxLayout(btns_wrapper);
   btns_layout->setSpacing(0);
-  btns_layout->setContentsMargins(300, 0, 30, 30);
+  btns_layout->setContentsMargins(235, 0, 30, 30);
 
   main_layout->addWidget(btns_wrapper, 0, Qt::AlignBottom);
+
+  // Dynamic follow profile button
+  QString initDistBtn = "";
+  distBtn = new QPushButton(initDistBtn);
+  QObject::connect(distBtn, &QPushButton::clicked, [=]() {
+    QUIState::ui_state.scene.dynamic_follow_profile = QUIState::ui_state.scene.dynamic_follow_profile < 3 ? QUIState::ui_state.scene.dynamic_follow_profile + 1 : 1;
+    if (QUIState::ui_state.scene.dynamic_follow_profile == 1) {
+      Params().put("DynamicFollowProfile", "1", 1);
+      distBtn->setText("Short\ngap");
+    } else if (QUIState::ui_state.scene.dynamic_follow_profile == 2) {
+      Params().put("DynamicFollowProfile", "2", 1);
+      distBtn->setText("Mid\ngap");
+    } else if (QUIState::ui_state.scene.dynamic_follow_profile == 3) {
+      Params().put("DynamicFollowProfile", "3", 1);
+      distBtn->setText("Far\ngap");
+    }
+  });
+  distBtn->setFixedWidth(200);
+  distBtn->setFixedHeight(200);
+  btns_layout->addWidget(distBtn, 0, Qt::AlignLeft);
+  btns_layout->addSpacing(35);
+
+//  distBtn->hide();
 
   // Dynamic lane profile button
   QString initDlpBtn = "";
@@ -224,35 +247,11 @@ ButtonsWindow::ButtonsWindow(QWidget *parent) : QWidget(parent) {
   });
   dlpBtn->setFixedWidth(200);
   dlpBtn->setFixedHeight(200);
-  btns_layout->addWidget(dlpBtn, 0, Qt::AlignLeft);
-  btns_layout->addSpacing(35);
+  btns_layout->addWidget(dlpBtn, 1, Qt::AlignLeft);
 
   if (QUIState::ui_state.scene.end_to_end) {
     dlpBtn->hide();
   }
-
-  // Dynamic follow profile button
-  QString initDistBtn = "";
-  distBtn = new QPushButton(initDistBtn);
-  QObject::connect(distBtn, &QPushButton::clicked, [=]() {
-    QUIState::ui_state.scene.dynamic_follow_profile = QUIState::ui_state.scene.dynamic_follow_profile + 1;
-    if (QUIState::ui_state.scene.dynamic_follow_profile > 3) {
-      QUIState::ui_state.scene.dynamic_follow_profile = 1;
-    }
-    if (QUIState::ui_state.scene.dynamic_follow_profile == 1) {
-      Params().put("DynamicFollowProfile", "1", 1);
-      distBtn->setText("Short\ngap");
-    } else if (QUIState::ui_state.scene.dynamic_follow_profile == 2) {
-      Params().put("DynamicFollowProfile", "2", 1);
-      distBtn->setText("Mid\ngap");
-    } else if (QUIState::ui_state.scene.dynamic_follow_profile == 3) {
-      Params().put("DynamicFollowProfile", "3", 1);
-      distBtn->setText("Far\ngap");
-    }
-  });
-  distBtn->setFixedWidth(200);
-  distBtn->setFixedHeight(200);
-  btns_layout->addWidget(distBtn, 0, Qt::AlignLeft);
 
   setStyleSheet(R"(
     QPushButton {
@@ -278,14 +277,14 @@ void ButtonsWindow::updateState(const UIState &s) {
     dlpBtn->setText("Auto\nLane");
   }
   if (QUIState::ui_state.scene.dynamic_follow_profile == 1) {
-    dlpBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(distBtnColors.at(0)));
-    dlpBtn->setText("Short\ngap");
+    distBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(distBtnColors.at(0)));
+    distBtn->setText("Short\ngap");
   } else if (QUIState::ui_state.scene.dynamic_follow_profile == 2) {
-    dlpBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(distBtnColors.at(1)));
-    dlpBtn->setText("Mid\ngap");
+    distBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(distBtnColors.at(1)));
+    distBtn->setText("Mid\ngap");
   } else if (QUIState::ui_state.scene.dynamic_follow_profile == 3) {
-    dlpBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(distBtnColors.at(2)));
-    dlpBtn->setText("Mid\ngap");
+    distBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(distBtnColors.at(2)));
+    distBtn->setText("Far\ngap");
   }
 }
 
