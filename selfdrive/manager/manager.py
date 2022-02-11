@@ -43,6 +43,7 @@ def manager_init():
     ("DisableMADS", "0"),
     ("DisableOnroadUploads", "0"),
     ("DynamicLaneProfile", "2"),
+    ("DynamicFollowProfile", "3"),
     ("EndToEndToggle", "1"),
     ("HasAcceptedTerms", "0"),
     ("HandsOnWheelMonitoring", "0"),

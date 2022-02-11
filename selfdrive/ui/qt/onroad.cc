@@ -231,6 +231,29 @@ ButtonsWindow::ButtonsWindow(QWidget *parent) : QWidget(parent) {
     dlpBtn->hide();
   }
 
+  // Dynamic follow profile button
+  QString initDistBtn = "";
+  distBtn = new QPushButton(initDistBtn);
+  QObject::connect(distBtn, &QPushButton::clicked, [=]() {
+    QUIState::ui_state.scene.dynamic_follow_profile = QUIState::ui_state.scene.dynamic_follow_profile + 1;
+    if (QUIState::ui_state.scene.dynamic_follow_profile > 3) {
+      QUIState::ui_state.scene.dynamic_follow_profile = 1;
+    }
+    if (QUIState::ui_state.scene.dynamic_follow_profile == 1) {
+      Params().put("DynamicFollowProfile", "1", 1);
+      distBtn->setText("Short\ngap");
+    } else if (QUIState::ui_state.scene.dynamic_follow_profile == 2) {
+      Params().put("DynamicFollowProfile", "2", 1);
+      distBtn->setText("Mid\ngap");
+    } else if (QUIState::ui_state.scene.dynamic_follow_profile == 3) {
+      Params().put("DynamicFollowProfile", "3", 1);
+      distBtn->setText("Far\ngap");
+    }
+  });
+  distBtn->setFixedWidth(200);
+  distBtn->setFixedHeight(200);
+  btns_layout->addWidget(distBtn, 0, Qt::AlignLeft);
+
   setStyleSheet(R"(
     QPushButton {
       color: white;
@@ -253,6 +276,16 @@ void ButtonsWindow::updateState(const UIState &s) {
   } else if (QUIState::ui_state.scene.dynamic_lane_profile == 2) {
     dlpBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(dlpBtnColors.at(2)));
     dlpBtn->setText("Auto\nLane");
+  }
+  if (QUIState::ui_state.scene.dynamic_follow_profile == 1) {
+    dlpBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(distBtnColors.at(0)));
+    dlpBtn->setText("Short\ngap");
+  } else if (QUIState::ui_state.scene.dynamic_follow_profile == 2) {
+    dlpBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(distBtnColors.at(1)));
+    dlpBtn->setText("Mid\ngap");
+  } else if (QUIState::ui_state.scene.dynamic_follow_profile == 3) {
+    dlpBtn->setStyleSheet(QString("font-size: 45px; border-radius: 100px; border-color: %1").arg(distBtnColors.at(2)));
+    dlpBtn->setText("Mid\ngap");
   }
 }
 

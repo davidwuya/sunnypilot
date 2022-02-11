@@ -18,8 +18,11 @@ public:
 
 private:
   QPushButton *dlpBtn;
+  QPushButton *distBtn;
 
   const QStringList dlpBtnColors = {"#007d00", "#c92231", "#7d007d"};
+  const QStringList distBtnColors = {"#ff0000", "#00ff00", "#0000ff"};
+
 
 public slots:
   void updateState(const UIState &s);
