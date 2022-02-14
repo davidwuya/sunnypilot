@@ -225,7 +225,7 @@ ButtonsWindow::ButtonsWindow(QWidget *parent) : QWidget(parent) {
   btns_layout->addSpacing(35);
 
   if (!Params().getBool("DynamicFollowButton"))
-    distBtn->hide();
+    {distBtn->hide();}
 
   // Dynamic lane profile button
   QString initDlpBtn = "";

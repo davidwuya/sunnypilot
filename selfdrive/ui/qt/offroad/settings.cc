@@ -505,7 +505,7 @@ SunnypilotPanel::SunnypilotPanel(QWidget* parent) : QWidget(parent) {
                                   this));
 
   toggles.append(new ParamControl("DynamicFollowButton",
-                                  "Dynamic Follow Button in Screen",
+                                  "Dynamic Follow Button in Screen (need Reboot)",
                                   "Manage dynamic follow profiles with a button on the screen, disable to use the steering wheel button (TSS2 only).",
                                   "../assets/offroad/icon_metric.png",
                                   this));
