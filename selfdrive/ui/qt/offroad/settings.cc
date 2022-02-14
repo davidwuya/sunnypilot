@@ -504,6 +504,12 @@ SunnypilotPanel::SunnypilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_speed_limit.png",
                                   this));
 
+  toggles.append(new ParamControl("DynamicFollowButton",
+                                  "Dynamic Follow Button in Screen",
+                                  "Manage dynamic follow profiles with a button on the screen, disable to use the steering wheel button (TSS2 only).",
+                                  "../assets/offroad/icon_metric.png",
+                                  this));
+
   toggles.append(new ParamControl("PrebuiltOn",
                                   "Fast Boot (Prebuilt)",
                                   "openpilot will fast boot by creating a Prebuilt file. Note: Turn off this feature if you have made any UI changes!",
