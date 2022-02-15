@@ -46,7 +46,7 @@ def manager_init():
     ("EndToEndToggle", "1"),
     ("HasAcceptedTerms", "0"),
     ("HandsOnWheelMonitoring", "0"),
-    ("MaxTimeOffroad", "9"),
+    ("MaxTimeOffroad", "30"),
     ("OnroadScreenOff", "0"),
     ("OnroadScreenOffBrightness", "50"),
     ("OpenpilotEnabledToggle", "1"),
