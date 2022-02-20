@@ -233,6 +233,7 @@ static void update_status(UIState *s) {
       s->scene.end_to_end = Params().getBool("EndToEndToggle");
       s->wide_camera = Hardware::TICI() ? Params().getBool("EnableWideCamera") : false;
       s->scene.dynamic_lane_profile = std::stoi(Params().get("DynamicLaneProfile"));
+      s->scene.dynamic_follow_profile = std::stoi(Params().get("DynamicFollowProfile"));
       s->scene.show_debug_ui = Params().getBool("ShowDebugUI");
       s->scene.speed_limit_control_enabled = Params().getBool("SpeedLimitControl");
       s->scene.speed_limit_perc_offset = Params().getBool("SpeedLimitPercOffset");

@@ -35,6 +35,7 @@ class CarState(CarStateBase):
     self.belowLaneChangeSpeed = True
     self.automaticLaneChange = True #TODO: add setting back
     self.distance_btn = 0 # KRKeegan - Add support for toyota distance button
+    self.dynamic_follow_btn = Params().get_bool('DynamicFollowButton') # Ale Sato - Add a switch for manage dynamic follow profiles with a button in screen or wheel
 
     self.cruise_buttons = 0
     self.prev_cruise_buttons = 0
@@ -125,10 +126,14 @@ class CarState(CarStateBase):
     # Ale Sato - Toyota 5/5 Speed Increments
     self.Fast_Speed_Increments = (2 if Params().get_bool('Change5speed') else 1)
 
-    # KRKeegan - Add support for toyota distance button
-    if self.CP.carFingerprint in TSS2_CAR:
-      self.distance_btn = 1 if cp_cam.vl["ACC_CONTROL"]["DISTANCE"] == 1 else 0
-      ret.distanceLines = cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"]
+    # Ale Sato - Add a switch for manage distance profiles with a button on screen or steering wheel
+    if self.dynamic_follow_btn:
+     ret.distanceLines = int(Params().get("DynamicFollowButton", encoding='utf8'))
+    else:
+      # KRKeegan - Add support for toyota distance button
+      if self.CP.carFingerprint in TSS2_CAR:
+        self.distance_btn = 1 if cp_cam.vl["ACC_CONTROL"]["DISTANCE"] == 1 else 0
+        ret.distanceLines = cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"]
 
     # some TSS2 cars have low speed lockout permanently set, so ignore on those cars
     # these cars are identified by an ACC_TYPE value of 2.

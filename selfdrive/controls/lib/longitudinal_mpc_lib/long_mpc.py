@@ -50,7 +50,7 @@ T_IDXS_LST = [index_function(idx, max_val=MAX_T, max_idx=N+1) for idx in range(N
 T_IDXS = np.array(T_IDXS_LST)
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 MIN_ACCEL = -3.5
-T_FOLLOW = 1.45
+T_FOLLOW = 1.7
 COMFORT_BRAKE = 2.5
 STOP_DISTANCE = 5.5
 
@@ -240,22 +240,14 @@ class LongitudinalMpc():
       self.set_weights_for_lead_policy()
 
   def get_cost_multipliers(self):
-    v_ego = self.x0[1]
-    v_ego_bps = [0, 10]
-    TFs = [1.0, 1.25, T_FOLLOW]
+    half_Tfollow = (T_FOLLOW - 1) * 0.5 + 1
+    TFs = [1.25, half_Tfollow, T_FOLLOW]
     # KRKeegan adjustments to costs for different TFs
     # these were calculated using the test_longitudial.py deceleration tests
-    a_change_tf = interp(self.desired_TF, TFs, [.1, .8, 1.])
-    j_ego_tf = interp(self.desired_TF, TFs, [.6, .8, 1.])
+    a_change_tf = interp(self.desired_TF, TFs, [.05, .5, 1.])
+    j_ego_tf = interp(self.desired_TF, TFs, [.05, .5, 1.])
     d_zone_tf = interp(self.desired_TF, TFs, [1.6, 1.3, 1.])
-     # KRKeegan adjustments to improve sluggish acceleration these also
-    # alter deceleration in the same range
-    j_ego_v_ego = interp(v_ego, v_ego_bps, [.05, 1.])
-    a_change_v_ego = interp(v_ego, v_ego_bps, [.05, 1.])
-    # Select the appropriate min/max of the options
-    j_ego = min(j_ego_tf, j_ego_v_ego)
-    a_change = min(a_change_tf, a_change_v_ego)
-    return (a_change, j_ego, d_zone_tf)
+    return (a_change_tf, j_ego_tf, d_zone_tf)
   
   def set_weights_for_lead_policy(self):
     cost_multipliers = self.get_cost_multipliers()
@@ -340,7 +332,7 @@ class LongitudinalMpc():
       y_dist = [1.25, 1.24, 1.23, 1.22, 1.21, 1.20, 1.18, 1.16, 1.13, 1.11, 1.09, 1.07, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05]
       self.desired_TF = np.interp(carstate.vEgo, x_vel, y_dist)
     elif carstate.distanceLines == 2: # Relaxed
-      self.desired_TF = 1.25
+      self.desired_TF = (T_FOLLOW - 1) * 0.5 + 1
     else:
       self.desired_TF = T_FOLLOW
 
