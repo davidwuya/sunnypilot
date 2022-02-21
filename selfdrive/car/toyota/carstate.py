@@ -128,7 +128,7 @@ class CarState(CarStateBase):
 
     # Ale Sato - Add a switch for manage distance profiles with a button on screen or steering wheel
     if self.dynamic_follow_btn:
-     ret.distanceLines = int(Params().get("DynamicFollowButton", encoding='utf8'))
+     ret.distanceLines = int(Params().get("DynamicFollowProfile", encoding='utf8'))
     else:
       # KRKeegan - Add support for toyota distance button
       if self.CP.carFingerprint in TSS2_CAR:
