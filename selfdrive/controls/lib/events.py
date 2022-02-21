@@ -715,8 +715,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # See https://comma.ai/setup for more information
   EventName.calibrationInvalid: {
     ET.PERMANENT: NormalPermanentAlert("Calibración Inválida", "Reubique Dispositivo y Recalibre"),
-    ET.SOFT_DISABLE: soft_disable_alert("Calibración Inválida", "Reubique Dispositivo y Recalibre"),
-    ET.NO_ENTRY: NoEntryAlert("Calibración Inválida", "Reubique Dispositivo y Recalibre"),
+    ET.SOFT_DISABLE: soft_disable_alert("Calibración Inválida: Reubique Dispositivo y Recalibre"),
+    ET.NO_ENTRY: NoEntryAlert("Calibración Inválida: Reubique Dispositivo y Recalibre"),
   },
 
   EventName.calibrationIncomplete: {
