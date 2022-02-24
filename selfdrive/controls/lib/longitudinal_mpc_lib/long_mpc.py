@@ -52,7 +52,7 @@ T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 MIN_ACCEL = -3.5
 T_FOLLOW = 1.7
 COMFORT_BRAKE = 2.5
-STOP_DISTANCE = 5.5
+STOP_DISTANCE = 6
 
 def get_stopped_equivalence_factor(v_lead, v_ego):
   # KRKeegan this offset rapidly decreases the following distance when the lead pulls
@@ -65,11 +65,11 @@ def get_stopped_equivalence_factor(v_lead, v_ego):
   distance = (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
   return distance
 
-def get_safe_obstacle_distance(v_ego, t_follow=T_FOLLOW):
-  return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + STOP_DISTANCE
+def get_safe_obstacle_distance(v_ego, t_follow=T_FOLLOW, stop_distance=STOP_DISTANCE):
+  return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + stop_distance
 
-def desired_follow_distance(v_ego, v_lead, t_follow=T_FOLLOW):
-  return get_safe_obstacle_distance(v_ego, t_follow) - get_stopped_equivalence_factor(v_lead, v_ego)
+def desired_follow_distance(v_ego, v_lead, t_follow=T_FOLLOW, stop_distance=STOP_DISTANCE):
+  return get_safe_obstacle_distance(v_ego, t_follow, stop_distance) - get_stopped_equivalence_factor(v_lead, v_ego)
 
 
 def gen_long_model():
@@ -98,7 +98,8 @@ def gen_long_model():
   a_max = SX.sym('a_max')
   prev_a = SX.sym('prev_a')
   desired_TF = SX.sym('desired_TF')
-  model.p = vertcat(a_min, a_max, x_obstacle, prev_a, desired_TF)
+  desired_stop_distance = SX.sym('desired_stop_distance')
+  model.p = vertcat(a_min, a_max, x_obstacle, prev_a, desired_TF, desired_stop_distance)
 
   # dynamics model
   f_expl = vertcat(v_ego, a_ego, j_ego)
@@ -133,11 +134,12 @@ def gen_long_mpc_solver():
   x_obstacle = ocp.model.p[2]
   prev_a = ocp.model.p[3]
   desired_TF = ocp.model.p[4]
+  desired_stop_distance = ocp.model.p[5]
 
   ocp.cost.yref = np.zeros((COST_DIM, ))
   ocp.cost.yref_e = np.zeros((COST_E_DIM, ))
 
-  desired_dist_comfort = get_safe_obstacle_distance(v_ego, desired_TF)
+  desired_dist_comfort = get_safe_obstacle_distance(v_ego, desired_TF, desired_stop_distance)
 
   # The main cost in normal operation is how close you are to the "desired" distance
   # from an obstacle at every timestep. This obstacle can be a lead car
@@ -164,7 +166,7 @@ def gen_long_mpc_solver():
 
   x0 = np.zeros(X_DIM)
   ocp.constraints.x0 = x0
-  ocp.parameter_values = np.array([-1.2, 1.2, 0.0, 0.0, T_FOLLOW])
+  ocp.parameter_values = np.array([-1.2, 1.2, 0.0, 0.0, T_FOLLOW, STOP_DISTANCE])
 
   # We put all constraint cost weights to 0 and only set them at runtime
   cost_weights = np.zeros(CONSTR_DIM)
@@ -205,6 +207,7 @@ class LongitudinalMpc():
   def __init__(self, e2e=False):
     self.e2e = e2e
     self.desired_TF = T_FOLLOW
+    self.desired_stop_distance = STOP_DISTANCE
     self.reset()
     self.accel_limit_arr = np.zeros((N+1, 2))
     self.accel_limit_arr[:,0] = -1.2
@@ -343,10 +346,13 @@ class LongitudinalMpc():
       x_vel = [0, 2.25, 4.5, 6.75, 9, 11.25, 13.5, 15.75, 18, 20.25, 22.5, 24.75, 27, 29.25, 31.5, 33.75, 36, 38.25, 40.5]
       y_dist = [1.25, 1.24, 1.23, 1.22, 1.21, 1.20, 1.18, 1.16, 1.13, 1.11, 1.09, 1.07, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05]
       self.desired_TF = np.interp(carstate.vEgo, x_vel, y_dist)
+      self.desired_stop_distance = STOP_DISTANCE - 1
     elif carstate.distanceLines == 2: # Relaxed
       self.desired_TF = (T_FOLLOW - 1) * 0.5 + 1
+      self.desired_stop_distance = STOP_DISTANCE - 0.5
     else:
       self.desired_TF = T_FOLLOW
+      self.desired_stop_distance = STOP_DISTANCE
 
   def update(self, carstate, radarstate, v_cruise, prev_accel_constraint=False):
     self.update_TF(carstate)
@@ -377,7 +383,7 @@ class LongitudinalMpc():
     v_cruise_clipped = np.clip(v_cruise * np.ones(N+1),
                                v_lower,
                                v_upper)
-    cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, self.desired_TF)
+    cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, self.desired_TF, self.desired_stop_distance)
 
     x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
     self.source = SOURCES[np.argmin(x_obstacles[0])]
@@ -387,6 +393,7 @@ class LongitudinalMpc():
     else:
       self.params[:,3] = a_ego
     self.params[:,4] = self.desired_TF
+    self.params[:,5] = self.desired_stop_distance
 
     self.run()
     if (np.any(lead_xv_0[:,0] - self.x_sol[:,0] < CRASH_DISTANCE) and
