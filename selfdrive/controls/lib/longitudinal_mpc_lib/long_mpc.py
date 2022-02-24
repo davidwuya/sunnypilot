@@ -253,7 +253,7 @@ class LongitudinalMpc():
     # KRKeegan adjustments to improve sluggish acceleration
     # do not apply to deceleration
     v_ego = self.x0[1]
-    v_ego_bpd = [0, 10]
+    v_ego_bps = [0, 10]
     j_ego_v_ego = 1
     a_change_v_ego = 1
     if (v_lead0 - v_ego >= 0) and (v_lead1 - v_ego >= 0):
