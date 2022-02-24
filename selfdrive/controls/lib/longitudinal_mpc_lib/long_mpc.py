@@ -233,13 +233,13 @@ class LongitudinalMpc():
     self.x0 = np.zeros(X_DIM)
     self.set_weights()
 
-  def set_weights(self):
+  def set_weights(self, v_lead0=0, v_lead1=0):
     if self.e2e:
       self.set_weights_for_xva_policy()
     else:
-      self.set_weights_for_lead_policy()
+      self.set_weights_for_lead_policy(v_lead0, v_lead1)
 
-  def get_cost_multipliers(self):
+  def get_cost_multipliers(self, v_lead0, v_lead1):
     half_Tfollow = (T_FOLLOW - 1) * 0.5 + 1
     TFs = [1.25, half_Tfollow, T_FOLLOW]
     # KRKeegan adjustments to costs for different TFs
@@ -247,10 +247,22 @@ class LongitudinalMpc():
     a_change_tf = interp(self.desired_TF, TFs, [.05, .5, 1.])
     j_ego_tf = interp(self.desired_TF, TFs, [.05, .5, 1.])
     d_zone_tf = interp(self.desired_TF, TFs, [1.6, 1.3, 1.])
-    return (a_change_tf, j_ego_tf, d_zone_tf)
+    # KRKeegan adjustments to improve sluggish acceleration
+    # do not apply to deceleration
+    v_ego = self.x0[1]
+    v_ego_bpd = [0, 10]
+    j_ego_v_ego = 1
+    a_change_v_ego = 1
+    if (v_lead0 - v_ego >= 0) and (v_lead1 - v_ego >= 0):
+      j_ego_v_ego = interp(v_ego, v_ego_bps, [.0, 1.])
+      a_change_v_ego = interp(v_ego, v_ego_bps, [.0, 1.])
+    # Select the appropriate min/max of the options
+    j_ego = min(j_ego_tf, j_ego_v_ego)
+    a_change = min(a_change_tf, a_change_v_ego)
+    return (a_change, j_ego, d_zone_tf)
   
-  def set_weights_for_lead_policy(self):
-    cost_multipliers = self.get_cost_multipliers()
+  def set_weights_for_lead_policy(self, v_lead0, v_lead1):
+    cost_multipliers = self.get_cost_multipliers(v_lead0, v_lead1)
     W = np.asfortranarray(np.diag([X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST,
                                    A_EGO_COST, A_CHANGE_COST * cost_multipliers[0],
                                    J_EGO_COST * cost_multipliers[1] ]))
@@ -338,13 +350,15 @@ class LongitudinalMpc():
 
   def update(self, carstate, radarstate, v_cruise, prev_accel_constraint=False):
     self.update_TF(carstate)
-    self.set_weights()
     v_ego = self.x0[1]
     a_ego = self.x0[2]
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
+
+    # Use the processed leads which always have a velocity
+    self.set_weights(lead_xv_0[0, 1], lead_xv_1[0, 1])
 
     # set accel limits in params
     self.params[:,0] = interp(float(self.status), [0.0, 1.0], [self.cruise_min_a, MIN_ACCEL])
