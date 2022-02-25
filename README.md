@@ -34,27 +34,47 @@ This fork is recommended to be used for Hyundai/Kia/Genesis (**HKG**), Honda, To
 
 ### Driving Enhancement
 * [**Modified Assistive Driving Safety (MADS)**](#modified-assistive-driving-safety-mads) - openpilot Automatic Lane Centering (ALC) and Adaptive Cruise Control (ACC) / Smart Cruise Control (SCC) can be engaged independently of each other
-* [**Dynamic Lane Profile (DLP)**](#dynamic-lane-profile-dlp) - dynamically switch lane profile base on lane recognition confidence
-* Quiet Drive 🤫 - Toggle to mute all notification sounds (excluding driver safety warnings)
-* Force Car Recognition (FCR) - Use a selector to force your car to be recognized by openpilot
-* [**Enhanced Speed Control**](#enhanced-speed-control) - Utilizes data from vision or OpenStreetMap to achieve dynamic speed control without user's intervention. Only available to openpilot longitudinal capable cars
+* [**Dynamic Lane Profile (DLP)**](#dynamic-lane-profile-dlp) - Dynamically switch lane profile base on lane recognition confidence
+* [**Enhanced Speed Control**](#enhanced-speed-control) - Utilizes data from vision or OpenStreetMap to achieve dynamic speed control without user's intervention
+* **No Disengage on Gas** - Allow the gas pedal press to not disengage openpilot. This feature is enabled by default.
+* **Quiet Drive 🤫** - Toggle to mute all notification sounds (excluding driver safety warnings)
+* **Auto Lane Change Timer** - Set a timer to delay the auto lane change operation when the blinker is used. No nudge on the steering wheel is required to auto lane change if a timer is set
+* **Force Car Recognition (FCR)** - Use a selector to force your car to be recognized by openpilot
+* **Fix openpilot No Offroad** - Enforce openpilot to go offroad and turns off after shutting down the car. This feature fixes non-official devices running openpilot without comma power
+* **Enable ACC+MADS with RES+/SET-** - Engage both ACC and MADS with a single press of RES+ or SET- button
+
+### Visual Enhancement
+* **M.A.D.S Status Icon** - Dedicated icon to display M.A.D.S. engagement status
+* **Lane Color** - Various lane colors to display real-time Lane Model and M.A.D.S. engagemenet status
+* **Developer (Dev) UI** - Display various real-time metrics on screen while driving
+  * Click on the "MAX" box on the top left of the openpilot display to toggle different metrics display
+* **Stand Still Timer** - Display time spent at a stop with M.A.D.S engaged (i.e., at a stop lights, stop signs, traffic congestions)
+* **Braking Status** - Current car speed text turns red when the car is braking by the driver or ACC/SCC
+
+### Operational Enhancement
+* **Fast Boot** - openpilot will fast boot by creating a Prebuilt file
+* **Disable Onroad Uploads** - Disable uploads completely when onroad. Necessary to avoid high data usage when connected to Wi-Fi hotspot
+* **Brightness Control (Global)** - Manually adjusts the global brightness of the screen
+* **Driving Screen Off Timer** - Turn off the device screen or reduce brightness to protect the screen after car starts
+* **Driving Screen Off Brightness (%)** - When using the Driving Screen Off feature, the brightness is reduced according to the automatic brightness ratio
+* **Max Time Offroad** - Device is automatically turned off after a set time when the engine is turned off (off-road) after driving (on-road)
 
 🚗 Driving Enhancement
 ---
 
 ### Modified Assistive Driving Safety (MADS)
 The goal of Modified Assistive Driving Safety (MADS) is to enhance the user driving experience with modified behaviors of openpilot engagements. This feature complies with comma.ai's safety rules as accurately as possible with the following changes:
-* openpilot ALC and ACC/SCC can be engaged independently of each other
+* openpilot Automatic Lane Centering and ACC/SCC can be engaged independently of each other
 * Dedicated button to toggle openpilot ALC:
   * `LFA` button: Newer HKG cars
-  * `CRUISE (MAIN)` button: Most HKG cars, Subaru (Global and Pre Global)
   * `LKAS` button: Honda, Toyota
+  * `CRUISE (MAIN)` button: Most HKG cars, Subaru (Global and Pre Global)
 * `SET-` button enables ACC/SCC
 * `CANCEL` button only disables ACC/SCC
 * `CRUISE (MAIN)` button disables openpilot completely when `OFF` (strictly enforced in panda safety code)
-* `BRAKE pedal` press will pause openpilot ALC; `BRAKE pedal` release will resume openpilot ALC; `BRAKE pedal` release will NOT resume ACC/SCC without an explicit entry
-* `GAS pedal` press will not disengage openpilot ALC or ACC/SCC
-* `TURN SIGNALS` (`Left` or `Right`) will pause openpilot ALC if the vehicle speed is below the threshold for openpilot Automatic Lane Change
+* `BRAKE pedal` press will pause openpilot Automatic Lane Centering; `BRAKE pedal` release will resume openpilot Automatic Lane Centering; `BRAKE pedal` release will NOT resume ACC/SCC without an explicit entry
+* `GAS pedal` press will not disengage openpilot Automatic Lane Centering or ACC/SCC
+* `TURN SIGNALS` (`Left` or `Right`) will pause openpilot Automatic Lane Centering if the vehicle speed is below the threshold for openpilot Automatic Lane Change
 * Event audible alerts are more relaxed to match manufacturer's stock behavior
 
 ### Dynamic Lane Profile (DLP)
@@ -74,23 +94,38 @@ To use Dynamic Lane Profile, do the following:
 ```
 
 ### Enhanced Speed Control
-This fork now allows openpilot-longitudinal-capable cars to dynamically adjust the longitudinal plan based on the fetched map data. Big thanks to the Move Fast team for the amazing implementation!
+This fork now allows supported cars to dynamically adjust the longitudinal plan based on the fetched map data. Big thanks to the Move Fast team for the amazing implementation!
+
+**Supported cars:**
+* openpilot Longitudinal Control capable
+* Stock Longitudinal Control
+  * Hyundai/Kia/Genesis
 
 Certain features are only available with an active data connection, via:
 * [comma Prime](https://comma.ai/prime) - Intuitive service provided directly by comma, or;
 * Personal Hotspot - From your mobile device, or a dedicated hotspot from a cellular carrier.
 
-Features:
-* [Vision-based Turn Control]: Use vision path predictions to estimate the appropriate speed to drive through turns ahead - i.e., slowing down for curves
-* [Map-Data-based Turn Control]: Use curvature information from map data to define speed limits to take turns ahead - i.e., slowing down for curves
+**Features:**
+* Vision-based Turn Control - Use vision path predictions to estimate the appropriate speed to drive through turns ahead - i.e., slowing down for curves
+* Map-Data-based Turn Control - Use curvature information from map data to define speed limits to take turns ahead - i.e., slowing down for curves
   * **Note: Require data connection**
-* [Speed Limit Control]: Use speed limit signs information from map data and car interface to automatically adapt cruise speed to road limits
+* Speed Limit Control - Use speed limit signs information from map data and car interface to automatically adapt cruise speed to road limits
   * **Note: Require data connection**
-    * [Speed Limit Offset]: When Speed Limit Control is enabled, set speed limit slightly higher than the actual speed limit for a more natural drive
+    * Speed Limit Offset - When Speed Limit Control is enabled, set speed limit slightly higher than the actual speed limit for a more natural drive
       * **Note: Require data connection**
-* [Hands on Wheel Monitoring]" Monitor and alert when driver is not keeping the hands on the steering wheel
+* Hands on Wheel Monitoring - Monitor and alert when driver is not keeping the hands on the steering wheel
 
-Instruction (WIP)
+**Instruction**
+
+**📗 How to use Custom Longitudinal Control on sunnypilot 📗**
+
+When using Speed Limit Control, Vision or Map based Turn control, you will be setting the "MAX" ACC speed on the openpilot display instead of the one in the dashboard. The car will then set the ACC setting in the dashboard to the targeted speed, but never exceeding the max speed set on the openpilot display. A quick press of the RES+ or SET- buttons will change this speed by 5 MPH or KM/H on the openpilot display, while a long deliberate press (about a 1/2 second press) changes it by 1 MPH or KM/H. DO NOT hold the RES+ or SET- buttons for longer that a 1 second. Either make quick or long deliberate presses only.
+
+**‼ Where to look when setting ACC speed ‼**
+
+Do not look at the dashboard when setting your ACC max speed. Instead, only look at the one on the openpilot display, "MAX". The reason you need to look at the openpilot display is because openpilot will be changing the one in the dashboard. It will be adjusting it as needed, never raising it above the one set on the openpilot display. ONLY look at the MAX speed on the openpilot display when setting the ACC speed instead of the dashboard!
+
+(Courtesy instructions from John, author of jvePilot)
 
 ⚒ Branch Definitions
 ---
@@ -199,7 +234,8 @@ Pull requests should be against the most current `prod-full` branch.
 * [martinl](https://github.com/martinl/openpilot)
 * [multikyd](https://github.com/openpilotkr)
 * [Move Fast GmbH](https://github.com/move-fast/openpilot)
-* [Dragonpilot](https://github.com/dragonpilot-community/dragonpilot)
+* [dragonpilot](https://github.com/dragonpilot-community/dragonpilot)
+* [neokii](https://github.com/neokii/openpilot)
 
 Licensing
 ------
