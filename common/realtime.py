@@ -18,7 +18,7 @@ DT_TRML = 0.5  # thermald and manager
 if TICI:
   DT_DMON = 0.05
 else:
-  DT_DMON = 0.1
+  DT_DMON = 0.001
 
 
 class Priority:
