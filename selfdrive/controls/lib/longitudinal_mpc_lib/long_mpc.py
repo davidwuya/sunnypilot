@@ -256,12 +256,14 @@ class LongitudinalMpc():
     v_ego_bps = [0, 10]
     j_ego_v_ego = 1
     a_change_v_ego = 1
+    a_change = 1
+    j_ego = 1
     if (v_lead0 - v_ego >= 0) and (v_lead1 - v_ego >= 0):
       j_ego_v_ego = interp(v_ego, v_ego_bps, [.0, 1.])
       a_change_v_ego = interp(v_ego, v_ego_bps, [.0, 1.])
-    # Select the appropriate min/max of the options
-    j_ego = min(j_ego_tf, j_ego_v_ego)
-    a_change = min(a_change_tf, a_change_v_ego)
+      # Select the appropriate min/max of the options
+      j_ego = min(j_ego_tf, j_ego_v_ego)
+      a_change = min(a_change_tf, a_change_v_ego)
     return (a_change, j_ego, d_zone_tf)
   
   def set_weights_for_lead_policy(self, v_lead0, v_lead1):
